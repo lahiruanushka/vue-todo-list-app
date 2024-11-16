@@ -1,6 +1,5 @@
 <script setup>
 import TodoButton from "../components/TodoButton.vue";
-
 import { reactive, defineEmits } from 'vue';
 
 const emit = defineEmits(['create-todo']);
@@ -12,35 +11,49 @@ const todoState = reactive({
 });
 
 const createTodo = () => {
-  if (todoState.todo.trim() !== "") {
-    emit("create-todo", todoState.todo);
-    todoState.todo = "";
-    todoState.invalid = false;
-    todoState.errorMsg = "";
+  // Reset error state at the start
+  todoState.invalid = false;
+  todoState.errorMsg = "";
+
+  // Trim and check the todo value
+  const trimmedTodo = todoState.todo.trim();
+  
+  if (trimmedTodo === "") {
+    todoState.invalid = true;
+    todoState.errorMsg = "Todo value cannot be empty";
     return;
   }
 
-  todoState.invalid = true;
-  todoState.errorMsg = "Todo value cannot be empty";
+  // Emit the trimmed todo value
+  emit("create-todo", trimmedTodo);
+  
+  // Clear the input after successful creation
+  todoState.todo = "";
 };
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center bg-gray-100 p-4">
-    <div class="bg-white p-4 rounded-lg shadow-md w-full max-w-sm">
+  <div class="w-full">
+    <div class="flex gap-4">
       <input
         type="text"
         placeholder="Enter your task"
         v-model="todoState.todo"
-        class="w-full p-3 mb-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+        @keyup.enter="createTodo"
+        class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       >
-      <span v-if="todoState.invalid" class="text-red-500 text-sm mb-4 block">
-        {{ todoState.errorMsg }}
-      </span>
-      <TodoButton @click="createTodo">Create</TodoButton>
+      <TodoButton 
+        @click="createTodo"
+        class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200"
+      >
+        Add Task
+      </TodoButton>
     </div>
+    <span 
+      v-if="todoState.invalid" 
+      class="text-red-500 text-sm mt-2 block"
+    >
+      {{ todoState.errorMsg }}
+    </span>
   </div>
 </template>
-
-<style scoped>
-</style>
