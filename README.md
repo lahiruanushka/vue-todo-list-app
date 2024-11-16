@@ -72,4 +72,3 @@ The statistics bar shows:
 
 ### Home Page
 ![Home Page](docs/screenshots/screenshot-home.png)
-*Central feed displaying recent todos*
